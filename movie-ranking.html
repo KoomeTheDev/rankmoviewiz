@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RankMoviewiz 2026 — by Koome The Dev</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── UNIQUE BACKGROUND: deep teal-to-forest gradient ── */
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background: #040f12;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 10% 0%, #0a3d2e 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 90% 100%, #0d2f3f 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, #071a14 0%, transparent 70%);
+      color: #e8f5f0;
+    }
+
+    /* grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 1.4rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.12);
+      backdrop-filter: blur(4px);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      color: #34d399;
+      letter-spacing: 0.03em;
+    }
+
+    .logo em {
+      font-style: italic;
+      color: #6ee7b7;
+    }
+
+    .logo span {
+      color: #e8f5f0;
+      font-style: normal;
+    }
+
+    .badge-2026 {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: #34d399;
+      color: #021a0f;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    nav a {
+      color: rgba(232, 245, 240, 0.45);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-left: 2rem;
+      transition: color 0.15s;
+    }
+
+    nav a:hover { color: #34d399; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 5rem 2rem 2.5rem;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #34d399;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: #e8f5f0;
+      max-width: 640px;
+      margin: 0 auto 1rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: #6ee7b7;
+    }
+
+    .hero p {
+      color: rgba(232, 245, 240, 0.4);
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 0.5rem;
+      padding: 1.4rem 2.5rem;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid rgba(52, 211, 153, 0.18);
+      color: rgba(232, 245, 240, 0.4);
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      border-color: #34d399;
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.06);
+    }
+
+    /* ── MOVIE LIST ── */
+    .movies {
+      position: relative;
+      z-index: 1;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1rem 2.5rem 3rem;
+    }
+
+    .movie-card {
+      display: grid;
+      grid-template-columns: 3rem 5rem 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.07);
+      padding: 1.4rem 0;
+      transition: all 0.18s;
+      border-radius: 8px;
+    }
+
+    .movie-card:hover {
+      background: rgba(52, 211, 153, 0.04);
+      padding: 1.4rem 1rem;
+      margin: 0 -1rem;
+      border-color: rgba(52, 211, 153, 0.15);
+    }
+
+    /* rank number */
+    .rank {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-style: italic;
+      color: rgba(52, 211, 153, 0.12);
+      text-align: right;
+      line-height: 1;
+    }
+
+    .rank.top3 { color: #34d399; }
+    .rank.top1 { color: #6ee7b7; font-size: 2.4rem; }
+
+    /* poster placeholder */
+    .poster-placeholder {
+      width: 5rem;
+      height: 7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.9rem;
+      border: 1px solid rgba(52, 211, 153, 0.12);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    /* movie info */
+    .movie-info { min-width: 0; }
+
+    .movie-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #e8f5f0;
+      margin-bottom: 0.3rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .movie-meta {
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: rgba(232, 245, 240, 0.35);
+      margin-bottom: 0.6rem;
+    }
+
+    .genre-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid rgba(52, 211, 153, 0.22);
+      color: rgba(110, 231, 183, 0.65);
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      margin-right: 0.35rem;
+    }
+
+    /* score */
+    .movie-score {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .score-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: #34d399;
+      display: block;
+      line-height: 1;
+    }
+
+    .stars {
+      color: #34d399;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+    }
+
+    .score-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232, 245, 240, 0.25);
+      margin-top: 2px;
+    }
+
+    /* new badge */
+    .new-badge {
+      display: inline-block;
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 0.1rem 0.4rem;
+      border-radius: 2px;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2.5rem 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      color: rgba(232, 245, 240, 0.18);
+      border-top: 1px solid rgba(52, 211, 153, 0.08);
+    }
+
+    footer .dev-credit {
+      color: #34d399;
+      opacity: 0.7;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      header { padding: 1.2rem 1.2rem; }
+      .filter-bar, .movies { padding-left: 1.2rem; padding-right: 1.2rem; }
+      .movie-card { grid-template-columns: 2rem 4rem 1fr auto; gap: 0.9rem; }
+      .rank { font-size: 1.3rem; }
+      .movie-title { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <em>Rank</em><span>Moviewiz</span>
+      <span class="badge-2026">2026</span>
+    </div>
+    <nav>
+      <a href="#">Top 10</a>
+      <a href="#">By Genre</a>
+      <a href="#">About</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-eyebrow">Fresh Picks &middot; July 2026 Edition</p>
+    <h1>The Best Films of <em>2026</em> Out and About</h1>
+    <p>Ranked by personal score &bull; Curated by Koome The Dev</p>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Horror</button>
+    <button class="filter-btn">Drama</button>
+    <button class="filter-btn">Thriller</button>
+    <button class="filter-btn">Sci-Fi</button>
+    <button class="filter-btn">Action</button>
+    <button class="filter-btn">Comedy</button>
+  </div>
+
+  <!-- MOVIE LIST -->
+  <div class="movies">
+
+    <!-- #1 -->
+    <div class="movie-card">
+      <div class="rank top1">1</div>
+      <div class="poster-placeholder" style="background:rgba(10,61,46,0.6);">🧠</div>
+      <div class="movie-info">
+        <div class="movie-title">
+          Spiderman Brand New Day
+          <span class="new-badge">New</span>
+        </div>
+        <div class="movie-meta">2026 &middot; Tom Holland &middot; Sci-Fi</div>
+        <span class="genre-tag">Sci-Fi</span>
+        <span class="genre-tag">Action and Adventure</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">9.1</span>
+        <div class="stars">★★★★★</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #2 -->
+    <div class="movie-card">
+      <div class="rank top3">2</div>
+      <div class="poster-placeholder" style="background:rgba(13,47,63,0.6);">🗣</div>
+      <div class="movie-info">
+        <div class="movie-title">
+          Avenger Doomsday
+          <span class="new-badge">Unreleased</span>
+        </div>
+        <div class="movie-meta">2026 &middot; Robert Downey Jr. &middot; Sci-Fi</div>
+        <span class="genre-tag">Sci-Fi</span>
+        <span class="genre-tag">Action and Adventure</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">8.8</span>
+        <div class="stars">★★★★★</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #3 -->
+    <div class="movie-card">
+      <div class="rank top3">3</div>
+      <div class="poster-placeholder" style="background:rgba(20,10,10,0.7);">⚔️</div>
+      <div class="movie-info">
+        <div class="movie-title">
+          Master of The Universe
+          <span class="new-badge">New</span>
+        </div>
+        <div class="movie-meta">2026 &middot; Nicholas Galitzine &middot; Sci-Fi, Fantasy</div>
+        <span class="genre-tag">Sci-Fi, Fantasy, Action, Adventure</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">8.5</span>
+        <div class="stars">★★★★½</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #4 -->
+    <div class="movie-card">
+      <div class="rank">4</div>
+      <div class="poster-placeholder" style="background:rgba(7,26,20,0.7);">🏹</div>
+      <div class="movie-info">
+        <div class="movie-title">
+          The Hunger Games: Sunrise on the Reaping
+          <span class="new-badge">Unreleased</span>
+        </div>
+        <div class="movie-meta">2026 &middot; Joseph Zada, Mckenna Grace &middot; Dystopian Sci-Fi,</div>
+        <span class="genre-tag">Dystopian Sci-Fi, Survival Action, Political Thriller</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">8.4</span>
+        <div class="stars">★★★★½</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #5 -->
+    <div class="movie-card">
+      <div class="rank">5</div>
+      <div class="poster-placeholder" style="background:rgba(13,47,63,0.5);">🥴</div>
+      <div class="movie-info">
+        <div class="movie-title">Toy Story 5
+          <span class="new-badge">New</span>
+        </div>
+        <div class="movie-meta">2026 &middot; Tom Hanks, Tim Allen &middot; Animation</div>
+        <span class="genre-tag">Animated, Comedy</span>
+        <span class="genre-tag">Animated, Comedy, Adventure, Family</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">8.3</span>
+        <div class="stars">★★★★½</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #6 -->
+    <div class="movie-card">
+      <div class="rank">6</div>
+      <div class="poster-placeholder" style="background:rgba(10,61,46,0.4);">🎯</div>
+      <div class="movie-info">
+        <div class="movie-title">The Odyssey
+          <span class="new-badge">Unreleased</span>
+        </div>
+        <div class="movie-meta">2026 &middot; Matt Damon, Anne Hathaway &middot; Historical Action Epic, Mythological Drama</div>
+        <span class="genre-tag">Historical Action Epic, Mythological Drama, Adventure</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">8.2</span>
+        <div class="stars">★★★★</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #7 -->
+    <div class="movie-card">
+      <div class="rank">7</div>
+      <div class="poster-placeholder" style="background:rgba(30,15,5,0.6);">👊</div>
+      <div class="movie-info">
+        <div class="movie-title">
+          Dune: Part Three (Messiah)
+          <span class="new-badge">Unreleased</span>
+        </div>
+        <div class="movie-meta">2026 &middot;  Timothée Chalamet, Zendaya&middot; Epic Space Opera, Sci-Fi</div>
+        <span class="genre-tag">Epic Space Opera, Sci-Fi, Political Drama</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">8.1</span>
+        <div class="stars">★★★★</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #8 -->
+    <div class="movie-card">
+      <div class="rank">8</div>
+      <div class="poster-placeholder" style="background:rgba(5,20,30,0.6);">🧟‍♂️</div>
+      <div class="movie-info">
+        <div class="movie-title">
+          Zach Cregger's Resident Evil reboot
+          <span class="new-badge">Unreleased</span>
+        </div>
+        <div class="movie-meta">2026 &middot; Boots Riley &middot; Survival Horror</div>
+        <span class="genre-tag">Survival Horror, Sci-Fi Thriller</span>
+        <span class="genre-tag">Survival Horror, Sci-Fi Thriller</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">7.9</span>
+        <div class="stars">★★★★</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #9 -->
+    <div class="movie-card">
+      <div class="rank">9</div>
+      <div class="poster-placeholder" style="background:rgba(15,25,10,0.6);">🍽️</div>
+      <div class="movie-info">
+        <div class="movie-title">The Invite</div>
+        <div class="movie-meta">2026 &middot; Olivia Wilde &middot; Drama</div>
+        <span class="genre-tag">Drama</span>
+        <span class="genre-tag">Comedy</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">7.8</span>
+        <div class="stars">★★★★</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+    <!-- #10 -->
+    <div class="movie-card">
+      <div class="rank">10</div>
+      <div class="poster-placeholder" style="background:rgba(10,20,40,0.6);">🐑</div>
+      <div class="movie-info">
+        <div class="movie-title">The Sheep Detectives</div>
+        <div class="movie-meta">2026 &middot; Kyle Balda &middot; Comedy</div>
+        <span class="genre-tag">Comedy</span>
+        <span class="genre-tag">Family</span>
+      </div>
+      <div class="movie-score">
+        <span class="score-number">7.7</span>
+        <div class="stars">★★★★</div>
+        <div class="score-label">Rating</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    RANKMOVIEWIZ 2026 &nbsp;&mdash;&nbsp;
+    CREATED BY <span class="dev-credit">KOOME THE DEV</span>
+    &nbsp;&mdash;&nbsp; RATINGS BASED ON MY VIEW AND PERSONAL OPINION
+  </footer>
+
+  <!-- FILTER BUTTON JS -->
+  <script>
+    const btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
